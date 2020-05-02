@@ -147,7 +147,7 @@ local CONF_INFERENCES = {
                          }
                        },
 
-  database = { enum = { "postgres", "cassandra", "off" }  },
+  database = { enum = { "postgres","mysql", "cassandra", "off" }  },
   pg_port = { typ = "number" },
   pg_timeout = { typ = "number" },
   pg_password = { typ = "string" },
@@ -155,6 +155,14 @@ local CONF_INFERENCES = {
   pg_ssl_verify = { typ = "boolean" },
   pg_max_concurrent_queries = { typ = "number" },
   pg_semaphore_timeout = { typ = "number" },
+
+  mysql_port = { typ = "number" },
+  mysql_timeout = { typ = "number" },
+  mysql_password = { typ = "string" },
+  mysql_ssl = { typ = "boolean" },
+  mysql_ssl_verify = { typ = "boolean" },
+  mysql_max_concurrent_queries = { typ = "number" },
+  mysql_semaphore_timeout = { typ = "number" },
 
   cassandra_contact_points = { typ = "array" },
   cassandra_port = { typ = "number" },
@@ -232,6 +240,7 @@ local CONF_INFERENCES = {
 local CONF_SENSITIVE_PLACEHOLDER = "******"
 local CONF_SENSITIVE = {
   pg_password = true,
+  mysql_password = true,
   cassandra_password = true,
 }
 
@@ -527,6 +536,23 @@ local function check_and_infer(conf)
   if conf.pg_semaphore_timeout ~= math.floor(conf.pg_semaphore_timeout) then
     errors[#errors + 1] = "pg_semaphore_timeout must be an integer greater than 0"
   end
+
+  if conf.mysql_max_concurrent_queries < 0 then
+    errors[#errors + 1] = "mysql_max_concurrent_queries must be greater than 0"
+  end
+
+  if conf.mysql_max_concurrent_queries ~= math.floor(conf.mysql_max_concurrent_queries) then
+    errors[#errors + 1] = "mysql_max_concurrent_queries must be an integer greater than 0"
+  end
+
+  if conf.mysql_semaphore_timeout < 0 then
+    errors[#errors + 1] = "mysql_semaphore_timeout must be greater than 0"
+  end
+
+  if conf.mysql_semaphore_timeout ~= math.floor(conf.mysql_semaphore_timeout) then
+    errors[#errors + 1] = "pg_semaphore_timeout must be an integer greater than 0"
+  end
+
 
   return #errors == 0, errors[1], errors
 end

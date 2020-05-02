@@ -522,6 +522,7 @@
 # Kong supports the following database versions:
 # - **PostgreSQL**: 9.5 and above.
 # - **Cassandra**: 2.2 and above.
+# - mysql support
 #
 # When not using a database, Kong is said to be in "DB-less mode": it will keep
 # its entities in memory, and each node needs to have this data entered via a
@@ -573,6 +574,31 @@
                                  # failing with an HTTP 500 status code.
                                  # Detailed discussion of this behavior is
                                  # available in the online documentation.
+
+
+# - mysql support
+
+#database = mysql
+
+#mysql_host = 127.0.0.1
+#mysql_port = 3306
+#mysql_timeout = 5000
+
+#mysql_user = kong
+#mysql_password =
+#mysql_database = kong
+
+#mysql_schema =
+
+#mysql_ssl = off
+
+#mysql_ssl_verify = off
+
+#mysql_max_concurrent_queries = 0
+
+#mysql_semaphore_timeout = 60000
+
+
 
 #cassandra_contact_points = 127.0.0.1  # A comma-separated list of contact
                                        # points to your cluster.

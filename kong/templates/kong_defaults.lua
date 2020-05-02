@@ -52,6 +52,19 @@ pg_ssl = off
 pg_ssl_verify = off
 pg_max_concurrent_queries = 0
 pg_semaphore_timeout = 60000
+
+mysql_host = 127.0.0.1
+mysql_port = 3306
+mysql_database = kong
+mysql_schema = NONE
+mysql_timeout = 5000
+mysql_user = kong
+mysql_password = NONE
+mysql_ssl = off
+mysql_ssl_verify = off
+mysql_max_concurrent_queries = 0
+mysql_semaphore_timeout = 60000
+
 cassandra_contact_points = 127.0.0.1
 cassandra_port = 9042
 cassandra_keyspace = kong
