@@ -126,4 +126,104 @@ return {
       CREATE INDEX IF NOT EXISTS ON oauth2_tokens(authenticated_userid);
     ]],
   },
+
+  mysql = {
+    up = [[
+      CREATE TABLE `oauth2_credentials` (
+      `id` varchar(50) PRIMARY KEY,
+      `created_at` timestamp NOT NULL,
+      `name` text ,
+      `consumer_id` varchar(50),
+      `client_id` text ,
+      `client_secret` text ,
+      `redirect_uris` text ,-- #Becareful, it is text array
+      FOREIGN KEY (`consumer_id`) REFERENCES `consumers`(`id`) ON DELETE CASCADE
+      ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+      -- ----------------------------
+      -- Indexes structure for table oauth2_credentials
+      -- ----------------------------
+      CREATE INDEX oauth2_credentials_consumer_id_idx ON oauth2_credentials  (`consumer_id`);
+      CREATE INDEX oauth2_credentials_secret_idx ON oauth2_credentials  (`client_secret`(50));
+
+      -- ----------------------------
+      -- Uniques structure for table oauth2_credentials
+      -- ----------------------------
+      ALTER TABLE oauth2_credentials ADD CONSTRAINT oauth2_credentials_client_id_key UNIQUE (`client_id`(50));
+
+      -- ----------------------------
+      -- Foreign Keys structure for table oauth2_credentials
+      -- ----------------------------
+      ALTER TABLE oauth2_credentials ADD CONSTRAINT oauth2_credentials_consumer_id_fkey FOREIGN KEY (`consumer_id`) REFERENCES consumers (`id`) ON DELETE CASCADE;
+
+
+      CREATE TABLE `oauth2_authorization_codes` (
+      `id` varchar(50) PRIMARY KEY,
+      `created_at` timestamp NOT NULL,
+      `credential_id` varchar(50),
+      `service_id` varchar(50),
+      `code` text ,
+      `authenticated_userid` text ,
+      `scope` text ,
+      `ttl` timestamp,
+      FOREIGN KEY (`credential_id`) REFERENCES `oauth2_credentials`(`id`) ON DELETE CASCADE,
+      FOREIGN KEY (`service_id`) REFERENCES `services`(`id`) ON DELETE CASCADE
+      ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+      -- ----------------------------
+      -- Indexes structure for table oauth2_authorization_codes
+      -- ----------------------------
+      CREATE INDEX oauth2_authorization_codes_authenticated_userid_idx ON oauth2_authorization_codes  (`authenticated_userid`(50));
+      CREATE INDEX oauth2_authorization_credential_id_idx ON oauth2_authorization_codes  (`credential_id`);
+      CREATE INDEX oauth2_authorization_service_id_idx ON oauth2_authorization_codes  (`service_id`);
+
+      -- ----------------------------
+      -- Uniques structure for table oauth2_authorization_codes
+      -- ----------------------------
+      ALTER TABLE oauth2_authorization_codes ADD CONSTRAINT oauth2_authorization_codes_code_key UNIQUE (`code`(50));
+
+      -- ----------------------------
+      -- Foreign Keys structure for table oauth2_authorization_codes
+      -- ----------------------------
+      ALTER TABLE oauth2_authorization_codes ADD CONSTRAINT oauth2_authorization_codes_credential_id_fkey FOREIGN KEY (`credential_id`) REFERENCES oauth2_credentials (`id`) ON DELETE CASCADE;
+      ALTER TABLE oauth2_authorization_codes ADD CONSTRAINT oauth2_authorization_codes_service_id_fkey FOREIGN KEY (`service_id`) REFERENCES services (`id`) ON DELETE CASCADE;
+
+
+      CREATE TABLE `oauth2_tokens` (
+      `id` varchar(50) PRIMARY KEY,
+      `created_at` timestamp NOT NULL,
+      `credential_id` varchar(50),
+      `service_id` varchar(50),
+      `access_token` text ,
+      `refresh_token` text ,
+      `token_type` text ,
+      `expires_in` int4,
+      `authenticated_userid` text ,
+      `scope` text ,
+      `ttl` timestamp,
+      FOREIGN KEY (`credential_id`) REFERENCES `oauth2_credentials`(`id`) ON DELETE CASCADE,
+      FOREIGN KEY (`service_id`) REFERENCES `services`(`id`) ON DELETE CASCADE
+      ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+      -- ----------------------------
+      -- Indexes structure for table oauth2_tokens
+      -- ----------------------------
+      CREATE INDEX oauth2_tokens_authenticated_userid_idx ON oauth2_tokens  (`authenticated_userid`(50));
+      CREATE INDEX oauth2_tokens_credential_id_idx ON oauth2_tokens  (`credential_id`);
+      CREATE INDEX oauth2_tokens_service_id_idx ON oauth2_tokens  (`service_id`);
+
+      -- ----------------------------
+      -- Uniques structure for table oauth2_tokens
+      -- ----------------------------
+      ALTER TABLE oauth2_tokens ADD CONSTRAINT oauth2_tokens_access_token_key UNIQUE (`access_token`(50));
+      ALTER TABLE oauth2_tokens ADD CONSTRAINT oauth2_tokens_refresh_token_key UNIQUE (`refresh_token`(50));
+
+      -- ----------------------------
+      -- Foreign Keys structure for table oauth2_tokens
+      -- ----------------------------
+      ALTER TABLE oauth2_tokens ADD CONSTRAINT oauth2_tokens_credential_id_fkey FOREIGN KEY (`credential_id`) REFERENCES oauth2_credentials (`id`) ON DELETE CASCADE;
+      ALTER TABLE oauth2_tokens ADD CONSTRAINT oauth2_tokens_service_id_fkey FOREIGN KEY (`service_id`) REFERENCES services (`id`) ON DELETE CASCADE;
+    ]],
+  },
+
 }

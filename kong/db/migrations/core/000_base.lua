@@ -432,10 +432,9 @@ return {
       `at`        timestamp NOT NULL,
       `nbf`       timestamp,
       `expire_at` timestamp NOT NULL,
-      `channel`   varchar(512),
+      `channel`   text,
       `data`      text,
-      INDEX       idx_cluster_events_at (`at`),
-      INDEX       idx_cluster_events_channel (`channel`)
+      INDEX       idx_cluster_events_at (`at`)
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
@@ -467,7 +466,7 @@ return {
       `tags`            text,
       `client_certificate_id`  varchar(50),
       UNIQUE INDEX `services_name_index` (`name`(50)),
-      INDEX `services_tags_index` (`tags`(256)),
+      INDEX `services_tags_index` (`tags`(127)),
       INDEX `services_client_certificate_id_index` (`client_certificate_id`(50))
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
@@ -494,7 +493,7 @@ return {
       `headers`                     text,
       UNIQUE INDEX `routes_name_index` (`name`(50)),
       INDEX `routes_service_id_index` (`service_id`(50)),
-      INDEX `routes_tags_index` (`tags`(256)),
+      INDEX `routes_tags_index` (`tags`(127)),
       CONSTRAINT `routes_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
@@ -525,7 +524,7 @@ return {
       `cert`       text ,
       `key`        text,
       `tags`       text,
-      INDEX  `certificates_tags_index` (`tags`(256))
+      INDEX  `certificates_tags_index` (`tags`(127))
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
@@ -536,7 +535,7 @@ return {
       `certificate_id` varchar(50),
       `tags`           text,
       UNIQUE INDEX `snis_name_unique_index` (`name`(50)),
-      INDEX  `snis_tags_index` (`tags`(256)),
+      INDEX  `snis_tags_index` (`tags`(127)),
       INDEX  `snis_certificate_id_index` (`certificate_id`(50)),
       CONSTRAINT `snis_certificate_id_fkey` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`) ON DELETE CASCADE
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -550,7 +549,7 @@ return {
       `tags`       text,
       UNIQUE  INDEX  `consumers_username_unique_index`  (`username`(128)),
       UNIQUE  INDEX  `consumers_custom_id_unique_index` (`custom_id`(128)),
-      INDEX  `consumers_tags_index`   (`tags`(256))
+      INDEX  `consumers_tags_index`   (`tags`(127))
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
@@ -575,7 +574,7 @@ return {
       INDEX `plugins_route_id_idx` (`route_id`(50)),
       INDEX `plugins_run_on_idx` (`run_on`(50)),
       INDEX `plugins_service_id_idx` (`service_id`(50)),
-      INDEX `plugins_tags_idx` (`tags`(256)),
+      INDEX `plugins_tags_idx` (`tags`(127)),
       CONSTRAINT `plugins_api_id_fkey` FOREIGN KEY (`api_id`) REFERENCES `apis` (`id`) ON DELETE CASCADE,
       CONSTRAINT `plugins_consumer_id_fkey` FOREIGN KEY (`consumer_id`) REFERENCES `consumers` (`id`) ON DELETE CASCADE,
       CONSTRAINT `plugins_route_id_fkey` FOREIGN KEY (`route_id`) REFERENCES `routes` (`id`) ON DELETE CASCADE,
@@ -598,7 +597,7 @@ return {
       `tags`                  text,
       `algorithm`             text,
       UNIQUE INDEX `upstreams_name_key` (`name`(50)),
-      INDEX `upstreams_tags_idx` (`tags`(256))
+      INDEX `upstreams_tags_idx` (`tags`(127))
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
@@ -611,7 +610,7 @@ return {
       `tags`         text,
       INDEX `targets_target_idx` (`target`(50)),
       INDEX `targets_upstream_id_idx` (`upstream_id`(50)),
-      INDEX `targets_tags_idx` (`tags`(256)),
+      INDEX `targets_tags_idx` (`tags`(127)),
       CONSTRAINT `targets_upstream_id_fkey` FOREIGN KEY (`upstream_id`) REFERENCES `upstreams` (`id`) ON DELETE CASCADE
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
@@ -638,15 +637,15 @@ return {
       `created_at`   timestamp NOT NULL,
       `cert`         text NOT NULL,
       `tags`         text,
-      INDEX  `ca_certificates_tags_idx` (`tags`(256)),
-      UNIQUE INDEX  `ca_certificates_cert_unique_index` (`cert`(256))
+      INDEX  `ca_certificates_tags_idx` (`tags`(127)),
+      UNIQUE INDEX  `ca_certificates_cert_unique_index` (`cert`(127))
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
       CREATE TABLE `tags` (
       `entity_id`     varchar(50) PRIMARY KEY,
       `entity_name`   timestamp NOT NULL,
       `tags`          text,
-      INDEX  `tags_tags_idx` (`tags`(256)),
+      INDEX  `tags_tags_idx` (`tags`(127)),
       INDEX  `tags_entity_name_idx` (`entity_name`)
       ) ENGINE=INNODB DEFAULT CHARSET=utf8;
     ]]

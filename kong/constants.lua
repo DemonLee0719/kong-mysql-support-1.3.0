@@ -12,7 +12,7 @@ local plugins = {
   "hmac-auth",
   "basic-auth",
   "ip-restriction",
-  "request-transformer",
+  --"request-transformer",
   "response-transformer",
   "request-size-limiting",
   "rate-limiting",
@@ -26,14 +26,14 @@ local plugins = {
   "aws-lambda",
   "request-termination",
   -- external plugins
-  "azure-functions",
-  "kubernetes-sidecar-injector",
-  "zipkin",
-  "pre-function",
-  "post-function",
-  "prometheus",
-  "proxy-cache",
-  "session",
+  --"azure-functions",
+  --"kubernetes-sidecar-injector",
+  --"zipkin",
+  --"pre-function",
+  --"post-function",
+  --"prometheus",
+  --"proxy-cache",
+  --"session",
 }
 
 local plugin_map = {}
@@ -134,6 +134,9 @@ return {
     POSTGRES = {
       MIN = "9.5",
       -- also accepts a DEPRECATED key, i.e. DEPRECATED = "9.4"
+    },
+    MYSQL = {
+      MIN = "5.6",
     },
     CASSANDRA = {
       MIN = "2.2",

@@ -111,4 +111,22 @@ return {
       );
     ]],
   },
+
+  mysql = {
+    up = [[
+      CREATE TABLE `response_ratelimiting_metrics` (
+      `identifier` text  NOT NULL,
+      `period` text  NOT NULL,
+      `period_date` timestamp NOT NULL,
+      `service_id` varchar(50) DEFAULT '00000000-0000-0000-0000-000000000000',
+      `route_id` varchar(50) DEFAULT '00000000-0000-0000-0000-000000000000',
+      `value` int4
+      ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+      -- ----------------------------
+      -- Primary Key structure for table response_ratelimiting_metrics
+      -- ----------------------------
+      ALTER TABLE response_ratelimiting_metrics ADD CONSTRAINT response_ratelimiting_metrics_pkey PRIMARY KEY (`identifier`(50), `period`(50), `period_date`, `service_id`, `route_id`);
+    ]]
+  },
 }

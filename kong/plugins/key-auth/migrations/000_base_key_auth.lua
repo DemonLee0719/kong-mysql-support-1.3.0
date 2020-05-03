@@ -29,4 +29,31 @@ return {
       CREATE INDEX IF NOT EXISTS ON keyauth_credentials(consumer_id);
     ]],
   },
+
+  mysql = {
+    up = [[
+      CREATE TABLE `keyauth_credentials` (
+      `id` varchar(50) PRIMARY KEY,
+      `created_at` timestamp NOT NULL,
+      `consumer_id` varchar(50),
+      `key` text ,
+      FOREIGN KEY (`consumer_id`) REFERENCES `consumers`(`id`) ON DELETE CASCADE
+      ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+      -- ----------------------------
+      -- Indexes structure for table keyauth_credentials
+      -- ----------------------------
+      CREATE INDEX keyauth_credentials_consumer_id_idx ON keyauth_credentials  (`consumer_id`);
+
+      -- ----------------------------
+      -- Uniques structure for table keyauth_credentials
+      -- ----------------------------
+      ALTER TABLE keyauth_credentials ADD CONSTRAINT keyauth_credentials_key_key UNIQUE (`key`(50));
+
+      -- ----------------------------
+      -- Foreign Keys structure for table keyauth_credentials
+      -- ----------------------------
+      ALTER TABLE keyauth_credentials ADD CONSTRAINT keyauth_credentials_consumer_id_fkey FOREIGN KEY (`consumer_id`) REFERENCES consumers (`id`) ON DELETE CASCADE;
+    ]]
+  },
 }

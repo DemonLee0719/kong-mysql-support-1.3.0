@@ -9,6 +9,7 @@ return {
   fields = {
     { name      = { type = "string", required = true } },
     { postgres  = { type = "record", required = true, fields = strat_migration } },
+    { mysql  = { type = "record", required = true, fields = strat_migration } },
     { cassandra = { type = "record", required = true, fields = strat_migration } },
   },
 }

@@ -9,6 +9,7 @@ local _M = {}
 
 _M.STRATEGIES   = {
   ["postgres"]  = true,
+  ["mysql"]  = true,
   ["cassandra"] = true,
   ["off"] = true,
 }

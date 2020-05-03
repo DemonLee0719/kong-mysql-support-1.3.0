@@ -112,4 +112,18 @@ return {
       );
     ]],
   },
+
+  mysql = {
+    up = [[
+    CREATE TABLE `ratelimiting_metrics` (
+      `identifier` text NOT NULL,
+      `period` text NOT NULL,
+      `period_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      `service_id` varchar(50) NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
+      `route_id` varchar(50) NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
+      `value` int(11) DEFAULT NULL,
+      PRIMARY KEY (`identifier`(50),`period`(50),`period_date`,`service_id`,`route_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    ]],
+  },
 }

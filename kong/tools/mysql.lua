@@ -3,7 +3,7 @@
 
 local bit = require "bit"
 local sub = string.sub
-local tcp = ngx.socket.tcp
+local tcp = require "kong.tools.socket"
 local strbyte = string.byte
 local strchar = string.char
 local strfind = string.find
@@ -24,12 +24,9 @@ local error = error
 local tonumber = tonumber
 
 
-if not ngx.config then
-    error("ngx_lua 0.9.11+ or ngx_stream_lua required")
-end
-
-if (not ngx.config.subsystem or ngx.config.subsystem == "http") -- subsystem is http
-    and (not ngx.config.ngx_lua_version or ngx.config.ngx_lua_version < 9011) -- old version
+if not ngx.config
+   or not ngx.config.ngx_lua_version
+   or ngx.config.ngx_lua_version < 9011
 then
     error("ngx_lua 0.9.11+ required")
 end
@@ -41,7 +38,7 @@ if not ok then
 end
 
 
-local _M = { _VERSION = '0.22' }
+local _M = { _VERSION = '0.19' }
 
 
 -- constants
@@ -111,13 +108,12 @@ local mt = { __index = _M }
 
 
 -- mysql field value type converters
-local converters = new_tab(0, 9)
+local converters = new_tab(0, 8)
 
 for i = 0x01, 0x05 do
     -- tiny, short, long, float, double
     converters[i] = tonumber
 end
-converters[0x00] = tonumber  -- decimal
 -- converters[0x08] = tonumber  -- long long
 converters[0x09] = tonumber  -- int24
 converters[0x0d] = tonumber  -- year
@@ -181,7 +177,7 @@ local function _from_cstring(data, i)
         return nil, nil
     end
 
-    return sub(data, i, last - 1), last + 1
+    return sub(data, i, last), last + 1
 end
 
 
@@ -249,7 +245,6 @@ local function _send_packet(self, req, size)
     return sock:send(packet)
 end
 
-
 local function _recv_packet(self)
     local sock = self.sock
 
@@ -298,7 +293,7 @@ local function _recv_packet(self)
         typ = "ERR"
     elseif field_count == 0xfe then
         typ = "EOF"
-    else
+    elseif field_count <= 250 then
         typ = "DATA"
     end
 
@@ -520,7 +515,8 @@ end
 
 
 function _M.new(self)
-    local sock, err = tcp()
+    local sock,err
+    sock, err = tcp.tcp()
     if not sock then
         return nil, err
     end
@@ -934,6 +930,28 @@ local function read_result(self, est_nrows)
     return rows
 end
 _M.read_result = read_result
+
+local escape_identifier = function(self, ident)
+  return '`' .. (tostring(ident):gsub('"', '""')) .. '`'
+end
+_M.escape_identifier = escape_identifier
+
+local escape_literal = function(self, val)
+  local _exp_0 = type(val)
+  if "number" == _exp_0 then
+    return tostring(val)
+  elseif "string" == _exp_0 then
+    return "'" .. tostring((val:gsub("'", "''"))) .. "'"
+  elseif "boolean" == _exp_0 then
+    return val and "TRUE" or "FALSE"
+  elseif "nil" == _exp_0 then
+    return "''"
+  elseif ngx.null == val then
+    return "''"
+  end
+  return error("don't know how to escape value: " .. tostring(val) .. " type:" .. _exp_0)
+end
+_M.escape_literal = escape_literal
 
 
 function _M.query(self, query, est_nrows)
